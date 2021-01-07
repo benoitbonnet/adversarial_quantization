@@ -77,7 +77,6 @@ def quantize_lambda(quantizer, perturbations, gradients, variance_map, lambda_va
     quantized_min[perturbations>0] = torch.max((quantized_min[perturbations>0]), torch.zeros(perturbations[perturbations>0].shape).to(quantizer.pytorch_device))
     quantized_min[perturbations<0] = torch.min((quantized_min[perturbations<0]), torch.zeros(perturbations[perturbations<0].shape).to(quantizer.pytorch_device))
     quantized = quantized_min
-    print(quantized.view(batch_size,-1).norm(dim=1))
     return(quantized)
 
 def find_lambda_max(quantizer, gradients, local_var, adv_perturbation):

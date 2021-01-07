@@ -55,6 +55,9 @@ model = nn.Sequential(preprocess_layer, model_init, softmax)
 model.eval();
 model.to(device)
 
+weights = torch.load("var1.pth")
+model.load_state_dict(weights)
+
 orig_paths = glob.glob(input_path+'/*')
 
 orig_paths.sort()

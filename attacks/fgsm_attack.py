@@ -54,7 +54,8 @@ class FGSM:
         """
         batch_size = inputs.shape[0]
         multiplier = 1 if targeted else -1
-
+        # self.b_search = False
+        # self.epsilon = 5
         if self.b_search:
             lowers = torch.zeros(batch_size)
             uppers = torch.ones(batch_size)*self.max_epsilon

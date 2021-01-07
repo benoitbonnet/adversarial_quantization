@@ -18,8 +18,9 @@ def best_quantifization_hill(quantizer, adversarial_images, images_orig, init_la
     grads, adv_labels = quantizer.find_grads(init_labels, adversarial_images)
     lambdas = find_lambdas(quantizer, perturbations_adv, grads, costs_maps)
 
-    perturbations_quantized = lambda_binary_search_stega(quantizer, lambdas, perturbations_adv, grads, init_labels, adv_labels, images_orig, costs_maps)
-    best_adversarials = perturbations_quantized + images_orig
+    #perturbations_quantized = lambda_binary_search_stega(quantizer, lambdas, perturbations_adv, grads, init_labels, adv_labels, images_orig, costs_maps)
+    best_adversarials = lambda_binary_search_stega(quantizer, lambdas, perturbations_adv, grads, init_labels, adv_labels, images_orig, costs_maps)
+    #best_adversarials = perturbations_quantized + images_orig
 
     return(best_adversarials)
 
@@ -111,10 +112,11 @@ def lambda_binary_search_stega(quantizer, lambdas, perturbation_adv, grads, init
             lambda_values = torch.tensor([lambdas[i][indexes[i]] for i in range(batch_size)], device = quantizer.pytorch_device)
 
             best_quantization = perturbation_quantized*(new_loss<=0).float().view(batch_size,1,1,1)+best_quantization*(new_loss>0).float().view(batch_size,1,1,1)
+            best_adversarial = adversarial_quantized*(new_loss<=0).float().view(batch_size,1,1,1)+best_adversarial*(new_loss>0).float().view(batch_size,1,1,1)
 
             perturbation_quantized = quantize(quantizer, lambda_values, perturbation_adv, grads, costs)
             adversarial_quantized = perturbation_quantized + image_orig.clone()
             adversarial_quantized = torch.clamp(adversarial_quantized,0,255)
             new_loss = quantizer.classif_loss(init_label, adv_label, adversarial_quantized)
 
-    return best_quantization
+    return best_adversarial

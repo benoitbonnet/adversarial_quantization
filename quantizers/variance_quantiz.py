@@ -36,12 +36,11 @@ def best_quantization_variance(quantizer, adversarial_images, images_orig, init_
         lower_lambda = (loss>0).float()*lambda_search + (loss<=0).float()*lower_lambda
         upper_lambda = (loss<=0).float()*lambda_search + (loss>0).float()*upper_lambda
         lambda_search = (lower_lambda+upper_lambda)/2
-
     return(best_adversarial)
 
 def quantize_lambda(quantizer, perturbations, gradients, variance_map, lambda_val):
     """
-    This function returns the quantized perturbation for a given value of lambda. 
+    This function returns the quantized perturbation for a given value of lambda.
     """
     maximum_distortion = quantizer.max_dist
     batch_size = perturbations.shape[0]

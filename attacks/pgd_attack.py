@@ -46,6 +46,7 @@ class PGD:
             self.b_search_steps = binary_search_steps
             self.upper_radius = upper_radius
             self.costs = costs_map
+            print('init PGD')
 
         def attack(self, model: nn.Module, inputs: torch.Tensor, labels: torch.Tensor,
                    targeted: bool = False) -> torch.Tensor:
@@ -98,7 +99,9 @@ class PGD:
             best_adversarial = inputs.clone().to(self.device)
 
             steps = 0
+            print('b')
             while steps<self.b_search_steps:
+                print('a')
                 found = False
                 radiuses = (uppers+lowers)/2
                 epsilons = (radiuses/(2*self.iterations)).to(self.device)

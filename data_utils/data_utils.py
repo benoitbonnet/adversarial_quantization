@@ -118,3 +118,15 @@ class AdversarialSample(torch.nn.Module):
 
     def get_gradients(self, py_model):
         return(find_grads(initial_labels, adversarial_image, py_model))
+
+def load_robust(init_model, weight_path):
+    state_dict = torch.load(weight_path)
+    checkpoint = state_dict['model']
+    new_checkpoint = {}
+    robust_fc, natural_fc = [], []
+    for check_key in checkpoint.keys():
+        if "module.attacker.model" in check_key:
+                new_checkpoint[check_key.replace("module.attacker.model.","")]=checkpoint[check_key].to('cuda:0')
+
+    init_model.load_state_dict(new_checkpoint)
+    return init_model

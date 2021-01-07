@@ -2,6 +2,7 @@ from .fgsm_attack import FGSM
 from .pgd_attack2 import PGD
 from .cw_attack import CarliniWagnerL2 as CW2
 from .ddn_attack import DDN
+from .bp_attack2 import BP
 
 
 # attack = DDN(init_norm = 100.,device=device)
@@ -17,3 +18,5 @@ def attack_generator(attack_name, pytorch_device):
         return(DDN(init_norm = 500.,device=device))
     elif attack_name == 'CW2':
         return(CW2(image_constraints=(0.0,255.0),num_classes=1000, device=pytorch_device))
+    elif attack_name == 'BP':
+        return(BP(upper_radius=1000,num_classes=1000, device=pytorch_device))

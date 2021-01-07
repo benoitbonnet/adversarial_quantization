@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+
 def best_quantization_l2(quantizer, adversarial_images, images_orig, init_labels):
     """
     This is the main function for the proposed best_quantization
@@ -12,8 +13,13 @@ def best_quantization_l2(quantizer, adversarial_images, images_orig, init_labels
     quantizer.model, torch_device = quantizer.model, quantizer.pytorch_device
     batch_size = adversarial_images.shape[0]
     perturbations_adv = adversarial_images - images_orig
-
     grads, adv_labels = quantizer.find_grads(init_labels, adversarial_images)
+
+    if quantizer.jpeg_quant!=0:
+        for i in range(batch_size):
+            adversarial_images[i,:,:,:] = jpeg.spatial_to_jpeg(adversarial_images[i,:,:,:].double(), quantizer.jpeg_quant, quantize=True).float()
+            perturbations_adv[i,:,:,:]= jpeg.spatial_to_jpeg(perturbations_adv[i,:,:,:].double(), quantizer.jpeg_quant, quantize=False).float()
+            images_orig[i,:,:,:] =  jpeg.spatial_to_jpeg(images_orig[i,:,:,:].double(), quantizer.jpeg_quant, quantize=True).float()
     lambdas = find_lambdas(quantizer, perturbations_adv, grads)
 
     perturbations_quantized = lambda_binary_search(quantizer, lambdas, perturbations_adv, grads, init_labels, adv_labels, images_orig)

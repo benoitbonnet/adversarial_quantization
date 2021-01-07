@@ -1,4 +1,3 @@
-
 from .variance_quantiz import best_quantization_variance
 from .gina_quantiz import best_quantifization_gina
 from .l2_quantiz import  best_quantization_l2
@@ -7,17 +6,22 @@ import torch
 import numpy as np
 
 class Quantizer:
-    def __init__(self, pytorch_model, number_classes, torch_device, max_distortion, quantization_method):
+    def __init__(self, pytorch_model, number_classes, torch_device, max_distortion, quantization_method, jpeg_quality=0):
         self.quantizer = quantization_method
         self.max_dist = max_distortion
         self.pytorch_device = torch_device
         self.model = pytorch_model
         self.num_classes = number_classes
+        self.jpeg_quant = jpeg_quality
 
-    def classif_loss(self, init_label, adv_label, py_image):
+    def classif_loss(self, init_label, adv_label, py_image, need_grads=False):
         """
         The loss used to study adverariality. If <0, then the image is adversarial
         """
+        if self.jpeg_quant!=0 and need_grads==False:
+            for i in range(py_image.shape[0]):
+                py_image[i,:,:,:] = jpeg.jpeg_to_spatial(py_image[i,:,:,:].double(), self.jpeg_quant,quantize=True).float()
+
         init_labels_onehot = torch.zeros(init_label.size(0), 1000, device=self.pytorch_device)
         init_labels_onehot.scatter_(1, init_label.unsqueeze(1).long(),1)
 
@@ -25,10 +29,8 @@ class Quantizer:
         adv_labels_onehot.scatter_(1, adv_label.unsqueeze(1).long(),1)
 
         prediction = self.model(py_image)
-
         classification_loss = prediction*init_labels_onehot-prediction*adv_labels_onehot
         classification_loss = classification_loss.sum(axis=1)
-
         return(classification_loss)
 
     def find_grads(self, initial_labels, adversarial_images):
@@ -45,9 +47,12 @@ class Quantizer:
                 only_adv_pred[ind,adversarial_labels[ind]]=0
         adversarial_labels  = only_adv_pred.argmax(1)
 
-        loss = self.classif_loss(initial_labels, adversarial_labels, adversarial_variables)
+        loss = self.classif_loss(initial_labels, adversarial_labels, adversarial_variables, need_grads=True)
         loss.sum().backward()
         gradients = adversarial_variables.grad.data
+        if self.jpeg_quant!=0:
+            for i in range(gradients.shape[0]):
+                gradients[i,:,:,:] = jpeg.spatial_to_jpeg(gradients[i,:,:,:].double(), self.jpeg_quant,quantize=False).float()
         return(gradients, adversarial_labels)
 
     def quantize_samples(self, adv_element, orig_element, label_element):
