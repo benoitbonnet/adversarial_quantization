@@ -10,8 +10,6 @@ import argparse
 import foolbox as fb
 
 parser = AttackParser(argparse.ArgumentParser())
-parser.labels_path = ('/nfs/nas4/bbonnet/bbonnet/datasets/labels/imagenet_2012_val/processed.csv')
-parser.input_path = '/nfs/nas4/bbonnet/bbonnet/datasets/images/test/'
 
 if not os.path.isdir(parser.save_path+'/measures'):
     os.makedirs(parser.save_path+'/measures')
@@ -71,15 +69,15 @@ for model_cpt,model_name in enumerate(parser.models):
             results_array[results_cpt:results_cpt+batch_size] = is_adv_quant*disto_quantized + (~is_adv_quant)*1e6
             results_array_unquant[results_cpt:results_cpt+batch_size] = is_adv_unquant*disto_unquantized + (~is_adv_unquant)*1e6
             #print(results_array[results_cpt:results_cpt+batch_size], results_array_unquant[results_cpt:results_cpt+batch_size])
+            for batch_image in range(quantized_adv.shape[0]):
+                if initial_label[batch_image].item()!=quant_label[batch_image].item():
+                     if parser.jpeg_quality==0:
+                         img_bgr = cv2.cvtColor(np.float32(quantized_adv[batch_image].cpu()), cv2.COLOR_RGB2BGR)
+                         cv2.imwrite(images_path+"/{}.png".format(image_nbs[0][batch_image]),img_bgr)
+                     else:
+                         np.save(images_path+"/{}.npy".format(image_nbs[0][batch_image]),np.float32(quantized_adv[batch_image].cpu()) )
 
             results_cpt+=batch_size
-        np.save('{}{}_{}_quantized_03.npy'.format(measures_path, model_name, attack_name), results_array)
-        np.save('{}{}_{}_unquantized_03.npy'.format(measures_path, model_name, attack_name), results_array_unquant)
+        np.save('{}{}_{}_quantized.npy'.format(measures_path, model_name, attack_name), results_array)
+        np.save('{}{}_{}_unquantized.npy'.format(measures_path, model_name, attack_name), results_array_unquant)
 #np.save('/nfs/nas4/bbonnet/bbonnet/distortion_curves/deepfool/{}2.npy'.format(model_name), results_array_unquant)
-
-# if initial_label[batch_image].item()==init_pred_label[batch_image].item():
-#     if jpeg_quality==0:
-#         img_bgr = cv2.cvtColor(np.float32(quantized_adv[batch_image].cpu()), cv2.COLOR_RGB2BGR)
-#         #cv2.imwrite(save_path+"/{}.png".format(image_nbs[0][batch_image]),img_bgr)
-#     else:
-#         output_path = save_path+"{}.jpg".format(image_nbs[0][batch_image])
