@@ -69,3 +69,4 @@ python draw_curves.py --upper 1 --inputs path_to_measures --outputs path_to_stor
 ```
 `--upper` corresponds to the maximum range of the x-axis (default 1= an average distortion of 1 on a pixel).\
 `--inputs` where to pull data from, default: `./outputs/measures` 
+
