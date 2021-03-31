@@ -62,7 +62,7 @@ To test the accuracy of a given model you can run
 ```
 python accuracy_test.py --model_type timm --models efficientnet_b0,mobilenetv2_100
 ```
-Note that some models require a different preprocessing and implementation can be clanky at times. Code also defaults for an image size of 224*224*3\
+Note that some models require a different preprocessing and implementation can be clanky at times. Code also defaults for an image size of 224 x 224 x 3\
 To plot measures obtained from an experiment
 ```
 python draw_curves.py --upper 1 --inputs path_to_measures --outputs path_to_store
