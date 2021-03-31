@@ -53,7 +53,7 @@ Define usage of gpu (default  `true`)
 ```
 --inputs path_to_inputs --labels_path path_to_labels --outputs path_to_outputs
 ```
-Where to pull data and labels from, where to store results. (default respectively `inputs`, `labels` and `outputs`)
+Where to pull data and labels from, where to store results. (default respectively `./inputs`, `./labels` and `./outputs`)
 
 ### Misc
 
