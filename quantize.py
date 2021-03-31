@@ -80,4 +80,3 @@ for model_cpt,model_name in enumerate(parser.models):
             results_cpt+=batch_size
         np.save('{}{}_{}_quantized.npy'.format(measures_path, model_name, attack_name), results_array)
         np.save('{}{}_{}_unquantized.npy'.format(measures_path, model_name, attack_name), results_array_unquant)
-#np.save('/nfs/nas4/bbonnet/bbonnet/distortion_curves/deepfool/{}2.npy'.format(model_name), results_array_unquant)
