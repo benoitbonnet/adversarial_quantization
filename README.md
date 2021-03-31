@@ -11,10 +11,10 @@ This code also provides custom versions of PGD_2 and FGSM by adding an optimized
 
 ## Other requirements
 
-Models: 
-**torchvision** (0.6.1)
-**timm** (https://github.com/rwightman/pytorch-image-models) (0.3.4).
-Attacks:
+Models: \
+**torchvision** (0.6.1)\
+**timm** (https://github.com/rwightman/pytorch-image-models) (0.3.4).\
+Attacks:\
 **foolbox** (https://github.com/bethgelab/foolbox) (3.2.1)
 
 
